@@ -1,9 +1,10 @@
 package dk.ek.jpaexercises.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.persistence.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Customer {
@@ -16,6 +17,9 @@ public class Customer {
     private String email;
     private String phone;
 
+    @OneToMany(mappedBy = "customer")
+    private List<Order> orders = new ArrayList<>();
+
     // Default constructor (required by JPA)
     public Customer() {
     }
@@ -25,6 +29,18 @@ public class Customer {
         this.name = name;
         this.email = email;
         this.phone = phone;
+    }
+
+    // Helper method to add an order
+    public void addOrder(Order order) {
+        orders.add(order);
+        order.setCustomer(this);
+    }
+
+    // Helper method to remove an order
+    public void removeOrder(Order order) {
+        orders.remove(order);
+        order.setCustomer(null);
     }
 
     // Getters and setters
@@ -59,5 +75,13 @@ public class Customer {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public List<Order> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(List<Order> orders) {
+        this.orders = orders;
     }
 }
